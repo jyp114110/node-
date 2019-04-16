@@ -272,7 +272,7 @@ console.log(obj) // {query:{id:'1',name:'zs'}}
 
 - url 模块是用于解析查询字符串的。当`url.parse(req.url,Boolean)` 方法的第二参数为 `true` 时，会调用 `queryString.parse(req.url) ` 方法，将查询字符串解析为对象的形式。
 
-​	queryString 也是一个模块。
+		queryString 也是一个模块。
 
 - 解析的结果是 **对象**，里面的值 全是 **字符串**
 
@@ -371,7 +371,10 @@ server.on('request',(req,res) => {
 
 ```js
 url.parse(req.url,true)
+// get 请求的数据 被解析后 存储在 一个对象中 {query:{id:'1',name:'zs'}}
 ```
+
+- 而`POST` 请求利用`querystring` 核心模块的`queryString.parse()` 进行解析
 
 ### (三) nodeJS  对 post 请求的处理
 
@@ -379,6 +382,8 @@ url.parse(req.url,true)
 - 具体步骤如下：
 
 ```js
+// 第五步： 引入 querystring 核心模块
+const queryString = require ('querystring')
 // 第一步： 声明 一个字符串变量 作为接受请求数据的容器
 let info = ''
 
@@ -391,15 +396,13 @@ server.on('request',(req,res)=>{
     })
     
     // 第三步：创建 监听数据 传输结束的事件
-    req.on('end',() =>{})   //数据传输结束时，触发。
+    req.on('end',() =>{ //数据传输结束时，触发。
+       // 第四步： 利用 queryString.parse() 解析查询字符串 （记得要引入该核心模块）
+        let dataObj = queryString.parse(info)
+        
+    })   
 })
 ```
-
-
-
-### 
-
-
 
 ## 补充：
 
@@ -441,7 +444,16 @@ JSON.stringfy(data,[callback],[格式化缩进的空格数])
 -  数据格式化输出
 
 ```js
-JSON.stringfy(data, null, 2) // 缩减 2个空格
+JSON.stringfy(data, null, 2) // 缩进 2个空格
+```
+
+### (三) 服务器中 操作页面跳转
+
+​	页面跳转是 浏览器的行为，服务器中无法直接操作前端页面跳转。但是可以通过 **设置 响应头** 的方式，实现前端页面跳转。
+
+```js
+res.setStatusCode = 302 // 必须设置响应码，否则不会跳转
+res.setHeader('location','/index') // 告诉浏览器跳转到首页
 ```
 
 
