@@ -272,7 +272,18 @@ console.log(obj) // {query:{id:'1',name:'zs'}}
 
 - url 模块是用于解析查询字符串的。当`url.parse(req.url,Boolean)` 方法的第二参数为 `true` 时，会调用 `queryString.parse(req.url) ` 方法，将查询字符串解析为对象的形式。
 
-		queryString 也是一个模块。
+   **querystring 也是一个模块**
+
+   - 常用于  解析 `POST` 请求携带的数据
+
+   ```js
+   // 引入 qurystring 模块
+   const qureyString = require('querystring')
+   // 使用 qureystring 模块
+   queryString.parse(info)
+   ```
+
+   ​
 
 - 解析的结果是 **对象**，里面的值 全是 **字符串**
 
@@ -336,8 +347,9 @@ server.on('request',(req,res) => {
 - 2、如果不加**路径**，就当做**核心模块**去查找，再当作**第三方模块**查找。
 
 
+## 三、nodeJS中模块化（简述）
 
-## 三、nodeJS中模块查找的规则
+### (一) 模块的查找原则
 
 - 1、先看模块名是否带有**路径**
 
@@ -348,7 +360,26 @@ server.on('request',(req,res) => {
     - 会先当做 **核心模块** 查找
     - 再当作 **第三方模块** 查找
 
-    ​
+
+###(二)模块的导入与导出
+
+#### 1、模块导入
+
+```js
+require(模块名)
+```
+
+#### 2、模块导出
+
+​	我们可以通过 `module.exports`  或者 `exports` 暴露数据。
+
+原理：
+
+````js
+exports = module.exoorts
+````
+
+**注意：**模块会最终暴露 `module.exports`指向的对象
 
 ## 四、 nodeJS 中get 请求和 post 请求的处理
 
@@ -382,7 +413,7 @@ url.parse(req.url,true)
 - 具体步骤如下：
 
 ```js
-// 第五步： 引入 querystring 核心模块
+// 第四-1步： 引入 querystring 核心模块
 const queryString = require ('querystring')
 // 第一步： 声明 一个字符串变量 作为接受请求数据的容器
 let info = ''
@@ -397,12 +428,14 @@ server.on('request',(req,res)=>{
     
     // 第三步：创建 监听数据 传输结束的事件
     req.on('end',() =>{ //数据传输结束时，触发。
-       // 第四步： 利用 queryString.parse() 解析查询字符串 （记得要引入该核心模块）
+       // 第四步-2： 利用 queryString.parse() 解析查询字符串 （记得要引入该核心模块）
         let dataObj = queryString.parse(info)
         
     })   
 })
 ```
+
+
 
 ## 补充：
 
