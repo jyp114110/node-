@@ -317,6 +317,7 @@ module.export =  router
 - 第一步： 下载模板引擎
 
 ```js
+npm i art-template
 npm i express-art-template
 ```
 
