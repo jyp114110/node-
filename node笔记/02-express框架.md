@@ -197,6 +197,12 @@ res.statusCode = 302
 res.setHeader('location','/index')
 ````
 
+`````js
+// res.send() 进阶
+res.josn() // 相当于  res.send(JSON.parser(data))
+res.jsonp() // 终极版
+`````
+
 ## 五、express中的静态资源托管
 
 - 对于静态资源直接读取资源返回即可
@@ -325,7 +331,7 @@ npm i express-art-template
 
 ```js
 // app.egine(模板后缀名,要使用的模板)
-express.engine('html',require('express-art-template'))
+app.engine('html',require('express-art-template'))
 ```
 
 - 第三步：设置默认目录

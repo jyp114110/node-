@@ -199,6 +199,32 @@ db.users.deleteMany({ name: 'jack' })
 
 less  than  equal  great  not 
 
+## MongoDB 中的 id 问题
+
+id 是 **ObjectId类型的数据**，并不是 简单字符串 或者 数字
+在拼id是要将ObjectId转成字符串  调用**toString()**即可
+mongodb 非常适合做分布式；
+
+```js
+const ObjectId = mongodb.ObjectID; //创建ObjectId的构造函数 
+   getNewsById(id, callback) { //根据id获取新闻数据
+        // 将字符串形式id转成ObjectId
+        id = new ObjectId(id);
+        condb(news => {
+            news.find({ _id: id }).toArray((err, data) => {
+                if (err) {
+                    return console.log(err);
+                }
+                console.log(data);
+                //将查询到了全部数据交给callback处理
+                callback && callback(data);
+            })
+        });
+    },
+```
+
+
+
 ## 在 node 中操作 MongoDB
 
 - 安装：`npm i  mongodb`
@@ -300,7 +326,7 @@ var MongoClient = require('mongodb').MongoClient
 var url = 'mongodb://localhost:27017'
 
 // 连接数据库
-MongoClient.connect(url, function (err, client) {
+MongoClient.connect(url,{ useNewUrlParser: true }, function (err, client) {
   if (err) {
     return console.log('链接数据库失败', err)
   }
@@ -308,7 +334,7 @@ MongoClient.connect(url, function (err, client) {
   console.log('数据库链接成功');
 
   // 获取集合对象
-  var db = client.db('nodedb')
+  var db = client.db('nodedb') // 数据库名
 
   // 关闭数据库链接
   client.close()
@@ -322,7 +348,7 @@ MongoClient.connect(url, function (err, client) {
 ```javascript
 //查询
 db
-    .collection("users")
+    .collection("users") // 链接的 集合名
     .find({age: {$gt:20}})
     .toArray(function(err, data){
     if(err) {
@@ -406,6 +432,54 @@ db
 
 ## 使用MongoDB实现 hacker-news
 
+​	封装 `db.js`
+
+```js
+const mongodb = require('mongodb')
+const monogoClient = mongodb.MongoClient
+const ObjectId = mongodb.ObjectID //创建ObjectId的构造函数
+
+let url = 'mongodb://127.0.0.1:27017'
+
+module.exports = {
+  getAllNews(callback) {
+    condb(news => {
+      news.find().toArray((err, data) => {
+        if (err) console.log(err)
+        callback && callback(data)
+      })
+    })
+  },
+  getNewsById(id, callback) {
+    condb(news => {
+      id = new ObjectId(id)
+      news.find({ _id: id }).toArray((err, data) => {
+        if (err) console.log(err)
+        callback && callback(data)
+      })
+    })
+  },
+  addNews(data, callback) {
+    condb(news => {
+      news.insert(data)
+      callback && callback()
+    })
+  }
+}
+// 链接数据库的函数
+function condb(callback) {
+  monogoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
+    if (err) console.log('数据库链接失败', err)
+    let news = client.db('news').collection('ueser')
+    callback && callback(news)
+    client.close()
+  })
+}
+
+```
+
+
+
 # 前后端分离的HackerNews
 
 ## 服务端渲染
@@ -419,3 +493,11 @@ db
 服务端提供数据和接口
 
 前端通过ajax请求数据，获取数据，结合模版引擎进行渲染。
+
+`````JS
+// 利用 express 中的res.jsonp
+res.send()
+res.josn() // 相当于  res.send(JSON.parser(data))
+res.jsonp() // 终极版
+`````
+

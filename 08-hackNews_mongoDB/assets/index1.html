@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>index1.html</h1>
+    <script src="./jquery-1.12.4.min.js"></script>
+    <script src="./template-web.js"></script>
+    <script>
+      $.ajax({
+        url: 'http://localhost:9999/index',
+        dataType: 'json',
+        success: function(info) {
+          console.log(info)
+          let str = template('tmp', { list: info })
+          $('body').append(str)
+        }
+      })
+    </script>
+
+    <script type="text/html" id="tmp">
+      <ul>
+          {{ each list v i }}
+              <li> {{ v.text }}</li>
+          {{ /each }}
+      </ul>
+    </script>
+  </body>
+</html>
